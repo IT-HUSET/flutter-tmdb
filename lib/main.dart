@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-
 import 'package:tmdb/application/app_state.dart';
+import 'package:tmdb/presentation/favorites/favorites_screen.dart';
+import 'package:tmdb/presentation/main/main_scaffold.dart';
 import 'package:tmdb/presentation/movies/movie_detail_screen.dart';
 import 'package:tmdb/presentation/movies/movies_list_screen.dart';
 
@@ -20,8 +21,9 @@ class _MovieAppState extends State<MovieApp> {
   final _appState = AppState();
 
   Map<String, WidgetBuilder> get _routes => {
-    'movies': (context) => MoviesListScreen(movieRepository: _appState.movieRepository),
-    'movies/detail': (context) => const MovieDetail(),
+    'movies': (context) => _withMainScaffold(MoviesListScreen(movieRepository: _appState.movieRepository), 0),
+    'movies/detail': (context) => _withMainScaffold(const MovieDetail(), 0),
+    'favorites': (context) => _withMainScaffold(const FavoritesScreen(), 1),
   };
 
   @override
@@ -43,5 +45,9 @@ class _MovieAppState extends State<MovieApp> {
         routes: _routes,
       ),
     );
+  }
+
+  Widget _withMainScaffold(final Widget body, final int index) {
+    return MainScaffold(body: body, currentIndex: index);
   }
 }

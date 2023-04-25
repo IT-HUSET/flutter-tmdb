@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-
 import 'package:tmdb/data/model/movie.dart';
 import 'package:tmdb/data/repository/movie_repository.dart';
-import 'package:tmdb/presentation/common_widgets/movie_hero.dart';
+import 'package:tmdb/presentation/common_widgets/movie_list.dart';
 
 class MoviesListScreen extends StatefulWidget {
   const MoviesListScreen({super.key, required this.movieRepository});
@@ -50,7 +49,7 @@ class _MoviesListScreenState extends State<MoviesListScreen> {
               child: Text('An error has occurred!'),
             );
           } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-            return _MovieList(movies: snapshot.data!);
+            return MovieList(movies: snapshot.data!);
           } else {
             return const Center(
               child: CircularProgressIndicator(),
@@ -59,42 +58,5 @@ class _MoviesListScreenState extends State<MoviesListScreen> {
         },
       ),
     );
-  }
-}
-
-class _MovieList extends StatelessWidget {
-  const _MovieList({required this.movies});
-
-  final List<Movie> movies;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: movies.length,
-      itemBuilder: (context, index) => GestureDetector(
-        onTap: () => Navigator.of(context).pushNamed('movies/detail', arguments: movies[index]),
-        child: _item(context, movies[index]),
-      ),
-      physics: const AlwaysScrollableScrollPhysics(),
-    );
-  }
-
-  Widget _item(BuildContext context, Movie movie) {
-    return Row(children: [
-      Container(
-        width: 80,
-        height: 120,
-        padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-        alignment: Alignment.center,
-        child: MovieHero(movie: movie),
-      ),
-      Text(
-        movie.title,
-        style: Theme.of(context).textTheme.titleLarge,
-      ),
-      const Spacer(),
-      const Icon(Icons.chevron_right),
-      const Padding(padding: EdgeInsets.only(right: 8)),
-    ]);
   }
 }
