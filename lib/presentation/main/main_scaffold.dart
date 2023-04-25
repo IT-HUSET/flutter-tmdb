@@ -1,48 +1,57 @@
 import 'package:flutter/material.dart';
+
 import 'package:tmdb/application/app_state.dart';
+import 'package:tmdb/presentation/main/main_bottom_bar.dart';
 
-class MainScaffold extends StatelessWidget {
-  const MainScaffold({super.key, required this.body, required this.currentIndex});
+class MainScaffold extends StatefulWidget {
+  const MainScaffold({super.key});
 
-  final Widget body;
-  final int currentIndex;
+  @override
+  State<StatefulWidget> createState() => _MainScaffoldState();
+}
+
+class _MainScaffoldState extends State<MainScaffold> {
+  /// MaterialApp builds a HeroController by default for the root Navigator, but since we build navigators on our own,
+  /// we need to build a HeroController for each Navigator.
+  final _heroController = List.generate(3, (_) => MaterialApp.createMaterialHeroController());
 
   @override
   Widget build(BuildContext context) {
-    final AppState appState = AppState.of(context);
+    final appState = AppState.of(context);
 
     return Scaffold(
-      body: body,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
-        items: [
-          const BottomNavigationBarItem(icon: Icon(Icons.movie), label: 'Movies'),
-          BottomNavigationBarItem(icon: _favoritesIcon(context, appState), label: 'Favorites'),
-          const BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
+      body: Stack(
+        children: [
+          _navigator(context, appState, 'movies', 0),
+          _navigator(context, appState, 'favorites', 1),
+          _navigator(context, appState, 'settings', 2),
         ],
-        onTap: (value) {
-          if (value == 0) {
-            Navigator.of(context).pushReplacementNamed('movies');
-          } else if (value == 1) {
-            Navigator.of(context).pushReplacementNamed('favorites');
-          } else {
-            Navigator.of(context).pushReplacementNamed('settings');
-          }
-        },
+      ),
+      bottomNavigationBar: MainBottomBar(
+        currentIndex: appState.mainSectionIndex,
+        onTap: (index) => appState.mainSectionIndex = index,
       ),
     );
   }
 
-  Widget _favoritesIcon(BuildContext context, AppState appState) {
-    return Stack(alignment: Alignment.center,
-        children: <Widget>[
-          const Icon(Icons.favorite),
-          Center(child:
-            Padding(padding: const EdgeInsets.only(bottom: 2), child:
-              Text('${appState.favoriteCount}', style: const TextStyle(fontSize: 9, color: Colors.white),),
-            )
-          ),
-        ]
+  Widget _navigator(BuildContext context, AppState appState, String initialRoute, int index) {
+    final appRouter = appState.appRouter;
+
+    /// Define a scope for hero transitions - needs to be done for each Navigator.
+    return HeroControllerScope(
+      controller: _heroController[index],
+
+      /// We use Offstage to hide the Navigator that is not currently active.
+      child: Offstage(
+        offstage: index != appState.mainSectionIndex,
+        child: Navigator(
+          initialRoute: initialRoute,
+          onGenerateRoute: (settings) {
+            final String name = settings.name ?? '';
+            return MaterialPageRoute(settings: settings, builder: appRouter.routes[name]!);
+          },
+        ),
+      ),
     );
   }
 }

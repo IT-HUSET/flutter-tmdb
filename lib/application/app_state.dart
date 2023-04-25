@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:flutter/widgets.dart';
+import 'package:tmdb/application/app_router.dart';
 import 'package:tmdb/data/api/movie_db_api.dart';
 import 'package:tmdb/data/model/movie.dart';
 import 'package:tmdb/data/model/user_credentials.dart';
@@ -24,17 +25,33 @@ class AppStateProvider extends InheritedNotifier {
 class AppState extends ChangeNotifier {
   final MovieRepository movieRepository = MovieRepository(MovieDBApi());
 
+  late final AppRouter appRouter = AppRouter(movieRepository);
+
+  final mainNavigatorKey = GlobalKey<NavigatorState>();
+  NavigatorState get mainNavigator => mainNavigatorKey.currentState!;
+
+  Key mainScaffoldKey = UniqueKey();
+
   UserCredentials? _currentUser;
   UserCredentials? get currentUser => _currentUser;
 
   bool get isLoggedIn => _currentUser != null;
   void login(String username, String password) {
     _currentUser = UserCredentials(username, password);
+    _mainSectionIndex = 0;
     notifyListeners();
   }
 
   void logout() {
     _currentUser = null;
+    mainScaffoldKey = UniqueKey();
+    notifyListeners();
+  }
+
+  int _mainSectionIndex = 0;
+  int get mainSectionIndex => _mainSectionIndex;
+  set mainSectionIndex(int value) {
+    _mainSectionIndex = value;
     notifyListeners();
   }
 
