@@ -4,6 +4,8 @@ import 'package:tmdb/presentation/favorites/favorites_screen.dart';
 import 'package:tmdb/presentation/main/main_scaffold.dart';
 import 'package:tmdb/presentation/movies/movie_detail_screen.dart';
 import 'package:tmdb/presentation/movies/movies_list_screen.dart';
+import 'package:tmdb/presentation/settings/settings_screen.dart';
+import 'package:tmdb/presentation/sign_in/sign_in.dart';
 
 
 void main() => runApp(const MovieApp());
@@ -19,12 +21,28 @@ class _MovieAppState extends State<MovieApp> {
   final _navigatorKey = GlobalKey<NavigatorState>();
 
   final _appState = AppState();
+  bool _isLoggedIn = false;
 
   Map<String, WidgetBuilder> get _routes => {
+    'sign_in': (context) => const SignInScreen(),
     'movies': (context) => _withMainScaffold(MoviesListScreen(movieRepository: _appState.movieRepository), 0),
     'movies/detail': (context) => _withMainScaffold(const MovieDetail(), 0),
     'favorites': (context) => _withMainScaffold(const FavoritesScreen(), 1),
+    'settings': (context) => _withMainScaffold(const SettingsScreen(), 2),
   };
+
+  @override
+  void initState() {
+    super.initState();
+    _appState.addListener(_appStateChanged);
+  }
+
+  void _appStateChanged() {
+    if (_isLoggedIn != _appState.isLoggedIn) {
+      _isLoggedIn = _appState.isLoggedIn;
+      _navigatorKey.currentState?.pushReplacementNamed(_isLoggedIn ? 'movies' : 'sign_in');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +59,7 @@ class _MovieAppState extends State<MovieApp> {
           )
         ),
         navigatorKey: _navigatorKey,
-        initialRoute: 'movies',
+        initialRoute: 'sign_in',
         routes: _routes,
       ),
     );

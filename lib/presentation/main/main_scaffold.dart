@@ -18,12 +18,15 @@ class MainScaffold extends StatelessWidget {
         items: [
           const BottomNavigationBarItem(icon: Icon(Icons.movie), label: 'Movies'),
           BottomNavigationBarItem(icon: _favoritesIcon(context, appState), label: 'Favorites'),
+          const BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
         ],
         onTap: (value) {
           if (value == 0) {
             Navigator.of(context).pushReplacementNamed('movies');
-          } else {
+          } else if (value == 1) {
             Navigator.of(context).pushReplacementNamed('favorites');
+          } else {
+            Navigator.of(context).pushReplacementNamed('settings');
           }
         },
       ),
