@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+
 import 'package:tmdb/application/app_state.dart';
+import 'package:tmdb/presentation/movies/movie_detail_screen.dart';
 import 'package:tmdb/presentation/movies/movies_list_screen.dart';
 
 
@@ -13,7 +15,14 @@ class MovieApp extends StatefulWidget {
 }
 
 class _MovieAppState extends State<MovieApp> {
+  final _navigatorKey = GlobalKey<NavigatorState>();
+
   final _appState = AppState();
+
+  Map<String, WidgetBuilder> get _routes => {
+    'movies': (context) => MoviesListScreen(movieRepository: _appState.movieRepository),
+    'movies/detail': (context) => const MovieDetail(),
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -21,16 +30,17 @@ class _MovieAppState extends State<MovieApp> {
       appState: _appState,
       child: MaterialApp(
         title: 'Movie App',
-        debugShowCheckedModeBanner: false,
         theme: ThemeData(
-            primarySwatch: Colors.blue,
-            textTheme: const TextTheme(
-              displayLarge: TextStyle(fontSize: 64.0, fontWeight: FontWeight.bold, fontFamily: 'PlayfairDisplay'),
-              displayMedium: TextStyle(fontSize: 48.0, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic, fontFamily: 'PlayfairDisplay'),
-              displaySmall: TextStyle(fontSize: 36.0, fontWeight: FontWeight.bold, fontFamily: 'Creepster'),
-            )
+          primarySwatch: Colors.blue,
+          textTheme: const TextTheme(
+            displayLarge: TextStyle(fontSize: 64.0, fontWeight: FontWeight.bold, fontFamily: 'PlayfairDisplay'),
+            displayMedium: TextStyle(fontSize: 48.0, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic, fontFamily: 'PlayfairDisplay'),
+            displaySmall: TextStyle(fontSize: 36.0, fontWeight: FontWeight.bold, fontFamily: 'Creepster'),
+          )
         ),
-        home: MoviesListScreen(movieRepository: _appState.movieRepository),
+        navigatorKey: _navigatorKey,
+        initialRoute: 'movies',
+        routes: _routes,
       ),
     );
   }

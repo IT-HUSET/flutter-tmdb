@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+
 import 'package:tmdb/data/model/movie.dart';
 import 'package:tmdb/data/repository/movie_repository.dart';
+import 'package:tmdb/presentation/common_widgets/movie_hero.dart';
 
 class MoviesListScreen extends StatefulWidget {
   const MoviesListScreen({super.key, required this.movieRepository});
@@ -69,7 +71,10 @@ class _MovieList extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: movies.length,
-      itemBuilder: (context, index) => _item(context, movies[index]),
+      itemBuilder: (context, index) => GestureDetector(
+        onTap: () => Navigator.of(context).pushNamed('movies/detail', arguments: movies[index]),
+        child: _item(context, movies[index]),
+      ),
       physics: const AlwaysScrollableScrollPhysics(),
     );
   }
@@ -81,7 +86,7 @@ class _MovieList extends StatelessWidget {
         height: 120,
         padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
         alignment: Alignment.center,
-        child: _image(movie),
+        child: MovieHero(movie: movie),
       ),
       Text(
         movie.title,
@@ -91,12 +96,5 @@ class _MovieList extends StatelessWidget {
       const Icon(Icons.chevron_right),
       const Padding(padding: EdgeInsets.only(right: 8)),
     ]);
-  }
-
-  Widget _image(Movie movie) {
-    return FadeInImage.assetNetwork(
-      placeholder: 'assets/images/placeholder.jpg',
-      image: movie.posterImageUrl,
-    );
   }
 }
