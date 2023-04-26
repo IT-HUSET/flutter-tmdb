@@ -4,8 +4,8 @@ import 'package:tmdb/application/app_state.dart';
 import 'package:tmdb/data/model/movie.dart';
 import 'package:tmdb/presentation/common_widgets/movie_hero.dart';
 
-class MovieDetail extends StatelessWidget {
-  const MovieDetail({super.key});
+class MovieDetailScreen extends StatelessWidget {
+  const MovieDetailScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
