@@ -8,7 +8,12 @@ import 'package:tmdb/presentation/settings/settings_screen.dart';
 import 'package:tmdb/presentation/sign_in/sign_in.dart';
 
 
-void main() => runApp(const MovieApp());
+void main() => runApp(
+  AppStateProvider(
+      appState: AppState(),
+      child: const MovieApp()
+  ),
+);
 
 class MovieApp extends StatefulWidget {
   const MovieApp({super.key});
@@ -20,13 +25,13 @@ class MovieApp extends StatefulWidget {
 class _MovieAppState extends State<MovieApp> {
   final _navigatorKey = GlobalKey<NavigatorState>();
 
-  final _appState = AppState();
+  late final _appState = AppState.of(context);
   bool _isLoggedIn = false;
 
   Map<String, WidgetBuilder> get _routes => {
     'sign_in': (context) => const SignInScreen(),
     'movies': (context) => _withMainScaffold(MoviesListScreen(movieRepository: _appState.movieRepository), 0),
-    'movies/detail': (context) => _withMainScaffold(const MovieDetail(), 0),
+    'movies/detail': (context) => _withMainScaffold(const MovieDetailScreen(), 0),
     'favorites': (context) => _withMainScaffold(const FavoritesScreen(), 1),
     'settings': (context) => _withMainScaffold(const SettingsScreen(), 2),
   };
