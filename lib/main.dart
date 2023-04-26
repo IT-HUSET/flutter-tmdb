@@ -3,23 +3,19 @@ import 'package:tmdb/application/app_state.dart';
 import 'package:tmdb/presentation/movies/movies_list_screen.dart';
 
 
-void main() => runApp(const MovieApp());
+void main() => runApp(
+  AppStateProvider(
+      appState: AppState(),
+      child: const MovieApp()
+  ),
+);
 
-class MovieApp extends StatefulWidget {
+class MovieApp extends StatelessWidget {
   const MovieApp({super.key});
 
   @override
-  State<MovieApp> createState() => _MovieAppState();
-}
-
-class _MovieAppState extends State<MovieApp> {
-  final _appState = AppState();
-
-  @override
   Widget build(BuildContext context) {
-    return AppStateProvider(
-      appState: _appState,
-      child: MaterialApp(
+    return MaterialApp(
         title: 'Movie App',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
@@ -30,8 +26,8 @@ class _MovieAppState extends State<MovieApp> {
               displaySmall: TextStyle(fontSize: 36.0, fontWeight: FontWeight.bold, fontFamily: 'Creepster'),
             )
         ),
-        home: MoviesListScreen(movieRepository: _appState.movieRepository),
-      ),
+        home: MoviesListScreen(movieRepository: AppState.of(context).movieRepository),
+
     );
   }
 }

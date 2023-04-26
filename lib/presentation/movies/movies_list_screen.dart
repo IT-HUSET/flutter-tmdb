@@ -69,28 +69,18 @@ class _MovieList extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: movies.length,
-      itemBuilder: (context, index) => _item(context, movies[index]),
+      itemBuilder: (context, index) => Row(children: [
+        Container(
+          width: 80,
+          height: 120,
+          padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+          alignment: Alignment.center,
+          child: _image(movies[index]),
+        ),
+        Text(movies[index].title, style: Theme.of(context).textTheme.displaySmall),
+      ]),
       physics: const AlwaysScrollableScrollPhysics(),
     );
-  }
-
-  Widget _item(BuildContext context, Movie movie) {
-    return Row(children: [
-      Container(
-        width: 80,
-        height: 120,
-        padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-        alignment: Alignment.center,
-        child: _image(movie),
-      ),
-      Text(
-        movie.title,
-        style: Theme.of(context).textTheme.titleLarge,
-      ),
-      const Spacer(),
-      const Icon(Icons.chevron_right),
-      const Padding(padding: EdgeInsets.only(right: 8)),
-    ]);
   }
 
   Widget _image(Movie movie) {
