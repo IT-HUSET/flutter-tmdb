@@ -5,31 +5,26 @@ import 'package:tmdb/presentation/movies/movie_detail_screen.dart';
 import 'package:tmdb/presentation/movies/movies_list_screen.dart';
 
 
-void main() => runApp(const MovieApp());
+void main() => runApp(
+  AppStateProvider(
+      appState: AppState(),
+      child: const MovieApp()
+  ),
+);
 
-class MovieApp extends StatefulWidget {
+class MovieApp extends StatelessWidget {
   const MovieApp({super.key});
 
-  @override
-  State<MovieApp> createState() => _MovieAppState();
-}
-
-class _MovieAppState extends State<MovieApp> {
-  final _navigatorKey = GlobalKey<NavigatorState>();
-
-  final _appState = AppState();
-
-  Map<String, WidgetBuilder> get _routes => {
-    'movies': (context) => MoviesListScreen(movieRepository: _appState.movieRepository),
-    'movies/detail': (context) => const MovieDetail(),
+  Map<String, WidgetBuilder> _routes(AppState appState) => {
+    'movies': (context) => MoviesListScreen(movieRepository: appState.movieRepository),
+    'movies/detail': (context) => const MovieDetailScreen(),
   };
 
   @override
   Widget build(BuildContext context) {
-    return AppStateProvider(
-      appState: _appState,
-      child: MaterialApp(
+    return MaterialApp(
         title: 'Movie App',
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primarySwatch: Colors.blue,
           textTheme: const TextTheme(
@@ -38,10 +33,8 @@ class _MovieAppState extends State<MovieApp> {
             displaySmall: TextStyle(fontSize: 36.0, fontWeight: FontWeight.bold, fontFamily: 'Creepster'),
           )
         ),
-        navigatorKey: _navigatorKey,
         initialRoute: 'movies',
-        routes: _routes,
-      ),
+        routes: _routes(AppState.of(context)),
     );
   }
 }
